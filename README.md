@@ -133,6 +133,33 @@ Poetry is used for:
 - Wheel and source distribution packaging.
 - Installing and executing the application.
 
+
+
+## Running Tests
+
+This project uses pytest for automated testing.
+
+Install the project and development dependencies:
+
+```bash
+poetry install
+```
+
+Run all tests:
+
+```bash
+poetry run pytest
+```
+
+Run tests with detailed output:
+
+```bash
+poetry run pytest -v
+```
+
+The tests verify the structure of the system information, required metrics, valid percentage ranges, and resource usage values.
+
+
 ## Author
 
 Abubakri Murainah
