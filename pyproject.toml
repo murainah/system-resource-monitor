@@ -1,0 +1,24 @@
+[project]
+name = "system-resource-monitor"
+version = "0.3.0"
+description = "A Python command-line tool for monitoring CPU, memory, and disk usage."
+authors = [
+    {name = "Abubakri",email = "ext.a.murainah@etu.emse.fr"}
+]
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "psutil (>=7.2.2,<8.0.0)",
+    "rich (>=15.0.0,<16.0.0)",
+    "pandas (>=3.1.0,<4.0.0)"
+]
+
+[tool.poetry]
+packages = [{include = "system_resource_monitor", from = "src"}]
+
+[project.scripts]
+system-monitor = "system_resource_monitor.cli:main"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"

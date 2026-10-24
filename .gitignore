@@ -1,0 +1,23 @@
+# Python cache
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv/
+venv/
+
+# Build outputs
+dist/
+build/
+*.egg-info/
+
+# Generated monitoring data
+system_metrics.csv
+metrics.csv
+
+# Editor files
+.vscode/
+.idea/
+
