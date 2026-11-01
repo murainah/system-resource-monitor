@@ -150,7 +150,6 @@ system-resource-monitor/
 ├── pyproject.toml
 ├── poetry.lock
 ├── README.md
-├── LICENSE
 ├── src/
 │   └── system_resource_monitor/
 │       ├── __init__.py
@@ -177,6 +176,3 @@ system-resource-monitor/
 
 Abubakri Murainah
 
-## License
-
-MIT. See [LICENSE](LICENSE).
