@@ -1,7 +1,8 @@
-
 # System Resource Monitor
 
-A Python command-line application for monitoring CPU, memory, and disk usage. The application supports real-time resource inspection, CSV logging, continuous monitoring, and statistical reporting.
+A Python command-line application for monitoring CPU, memory, and disk usage. It supports real-time resource inspection, CSV logging, continuous monitoring, and statistical reporting.
+
+The project uses **Poetry** as its build tool for dependency management, versioning, packaging, and running tasks.
 
 ## Features
 
@@ -9,30 +10,52 @@ A Python command-line application for monitoring CPU, memory, and disk usage. Th
 - Save resource measurements to CSV.
 - Continuously collect measurements at configurable intervals.
 - Generate reports showing average, minimum, and maximum resource usage.
-- Manage dependencies, versions, and packaging using Poetry.
 
-## Technologies
+## Prerequisites
 
-- Python 3.14
-- Poetry
-- psutil
-- Rich
-- Pandas
+- Python 3.11 or newer
+- [Poetry](https://python-poetry.org/docs/#installation) 2.2 or newer (needed for the `[dependency-groups]` section of `pyproject.toml`)
 
-## Installation
-
-Clone the repository:
+Check your versions:
 
 ```bash
-git clone https://github.com/YOUR-USERNAME/system-resource-monitor.git
+python --version
+poetry --version
+```
+
+## Quick Start
+
+```bash
+git clone https://github.com/murainah/system-resource-monitor.git
 cd system-resource-monitor
-```
-
-Install the dependencies and project:
-
-```bash
 poetry install
+poetry run pytest
+poetry build
 ```
+
+These four commands install the dependencies, run the tests, and produce the distributable packages.
+
+## Build Tool Usage
+
+| Task | Command |
+|---|---|
+| Install dependencies and project | `poetry install` |
+| Add a dependency | `poetry add <package>` |
+| Add a development dependency | `poetry add --group dev <package>` |
+| Update the lock file | `poetry lock` |
+| Run the tests | `poetry run pytest` |
+| Show the current version | `poetry version` |
+| Bump the version | `poetry version patch` / `minor` / `major` |
+| Build wheel and source distribution | `poetry build` |
+| Run the application | `poetry run system-monitor status` |
+
+### What Poetry automates
+
+- **Dependency management:** runtime dependencies (`psutil`, `rich`, `pandas`) and development dependencies (`pytest`) are declared in `pyproject.toml`. `poetry.lock` pins exact versions so every install is reproducible.
+- **Compilation / build:** Python has no separate compile step. `poetry build` is the build step: it assembles the source distribution and wheel from `src/`.
+- **Version management:** the version lives in `pyproject.toml` and is changed with `poetry version`.
+- **Packaging:** `poetry build` writes a wheel (`.whl`) and a source archive (`.tar.gz`) to `dist/`.
+- **Entry point:** the `system-monitor` command is generated from `[project.scripts]`.
 
 ## Usage
 
@@ -42,68 +65,83 @@ Display current resource usage:
 poetry run system-monitor status
 ```
 
-Save a measurement to CSV:
+Save a measurement to CSV (default file `system_metrics.csv`):
 
 ```bash
 poetry run system-monitor record
-```
-
-Save a measurement to a custom file:
-
-```bash
 poetry run system-monitor record --file metrics.csv
 ```
 
-Generate a summary report:
+Generate a summary report from a CSV file:
 
 ```bash
 poetry run system-monitor report
+poetry run system-monitor report --file metrics.csv
 ```
 
-Continuously record measurements:
+Continuously record measurements (press Ctrl+C to stop):
 
 ```bash
 poetry run system-monitor watch --interval 5
 ```
 
-Press Ctrl+C to stop continuous monitoring.
+The interval is the delay after each measurement. Collecting CPU usage itself takes about one second.
 
-The interval specifies the delay after each measurement. Collecting CPU usage itself takes approximately one second.
-
-## Building the Project
-
-Build the wheel and source distribution:
+## Building and Packaging
 
 ```bash
 poetry build
 ```
 
-The generated packages are saved in `dist/`.
+The packages are written to `dist/`, for example:
+
+```text
+dist/system_resource_monitor-0.3.0-py3-none-any.whl
+dist/system_resource_monitor-0.3.0.tar.gz
+```
+
+Verify the wheel in a clean virtual environment:
+
+```bash
+python -m venv /tmp/testenv
+/tmp/testenv/bin/pip install dist/system_resource_monitor-0.3.0-py3-none-any.whl
+/tmp/testenv/bin/system-monitor status
+```
 
 ## Version Management
 
-Display the current project version:
+Show the current version:
 
 ```bash
 poetry version
 ```
 
-Increase the minor version:
+Release a new version, then commit and tag it:
 
 ```bash
 poetry version minor
+git commit -am "Bump version to 0.4.0"
+git tag v0.4.0
+git push origin main --tags
 ```
 
 ## Testing
 
-Verify the command-line interface:
+The project uses pytest.
+
+```bash
+poetry run pytest
+poetry run pytest -v
+```
+
+The tests check the structure of the collected system information, the presence of the required metrics, and that percentage values fall within valid ranges.
+
+You can also check the command-line interface manually:
 
 ```bash
 poetry run system-monitor --help
 poetry run system-monitor status
 ```
-
-To verify the generated wheel, install it into a separate virtual environment and run the installed command.
 
 ## Project Structure
 
@@ -112,6 +150,7 @@ system-resource-monitor/
 ├── pyproject.toml
 ├── poetry.lock
 ├── README.md
+├── LICENSE
 ├── src/
 │   └── system_resource_monitor/
 │       ├── __init__.py
@@ -121,49 +160,23 @@ system-resource-monitor/
 │       ├── continuous.py
 │       └── cli.py
 └── tests/
+    ├── __init__.py
+    └── test_monitor.py
 ```
 
-## Build Automation
+## Technologies
 
-Poetry is used for:
-
-- Dependency management through `pyproject.toml`.
-- Reproducible dependency resolution through `poetry.lock`.
-- Project version management.
-- Wheel and source distribution packaging.
-- Installing and executing the application.
-
-
-
-## Running Tests
-
-This project uses pytest for automated testing.
-
-Install the project and development dependencies:
-
-```bash
-poetry install
-```
-
-Run all tests:
-
-```bash
-poetry run pytest
-```
-
-Run tests with detailed output:
-
-```bash
-poetry run pytest -v
-```
-
-The tests verify the structure of the system information, required metrics, valid percentage ranges, and resource usage values.
-
+- Python
+- Poetry
+- psutil
+- Rich
+- Pandas
+- pytest
 
 ## Author
 
 Abubakri Murainah
 
-## Version
+## License
 
-0.3.0
+MIT. See [LICENSE](LICENSE).
