@@ -149,7 +149,7 @@ poetry run system-monitor status
 system-resource-monitor/
 ├── pyproject.toml
 ├── poetry.lock
-├── README.md
+├── README.md 
 ├── src/
 │   └── system_resource_monitor/
 │       ├── __init__.py
