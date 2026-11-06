@@ -4,6 +4,8 @@ A Python command-line application for monitoring CPU, memory, and disk usage. It
 
 The project uses **Poetry** as its build tool for dependency management, versioning, packaging, and running tasks.
 
+**Repository:** https://github.com/murainah/system-resource-monitor
+
 ## Features
 
 - Display current CPU, memory, and disk usage.
@@ -43,6 +45,7 @@ These four commands install the dependencies, run the tests, and produce the dis
 | Add a dependency | `poetry add <package>` |
 | Add a development dependency | `poetry add --group dev <package>` |
 | Update the lock file | `poetry lock` |
+| Validate the configuration | `poetry check` |
 | Run the tests | `poetry run pytest` |
 | Show the current version | `poetry version` |
 | Bump the version | `poetry version patch` / `minor` / `major` |
@@ -149,7 +152,7 @@ poetry run system-monitor status
 system-resource-monitor/
 ├── pyproject.toml
 ├── poetry.lock
-├── README.md 
+├── README.md
 ├── src/
 │   └── system_resource_monitor/
 │       ├── __init__.py
@@ -163,6 +166,13 @@ system-resource-monitor/
     └── test_monitor.py
 ```
 
+## Troubleshooting
+
+- **`poetry: command not found`:** install Poetry following the [official guide](https://python-poetry.org/docs/#installation).
+- **Error about `dependency-groups`:** your Poetry is older than 2.2. Upgrade it with `poetry self update`.
+- **`poetry.lock` out of sync:** run `poetry lock` and then `poetry install` again.
+- **`report` says no metrics file found:** run `poetry run system-monitor record` first to create `system_metrics.csv`.
+
 ## Technologies
 
 - Python
@@ -174,5 +184,4 @@ system-resource-monitor/
 
 ## Author
 
-Abubakri Murainah
-
+Abubakri Murainah — https://github.com/murainah
