@@ -1,10 +1,8 @@
-
 import time
 
 from rich.console import Console
 
 from .logger import save_measurement
-
 
 console = Console()
 
@@ -15,10 +13,7 @@ def continuous_monitoring(interval=5):
     if interval <= 0:
         raise ValueError("Interval must be greater than zero.")
 
-    console.print(
-        f"[green]Monitoring started. "
-        f"Interval: {interval} seconds.[/green]"
-    )
+    console.print(f"[green]Monitoring started. Interval: {interval} seconds.[/green]")
     console.print("Press Ctrl+C to stop.\n")
 
     try:

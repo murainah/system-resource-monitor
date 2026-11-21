@@ -1,4 +1,3 @@
-
 from system_resource_monitor.monitor import get_system_info
 
 

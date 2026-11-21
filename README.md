@@ -146,6 +146,17 @@ poetry run system-monitor --help
 poetry run system-monitor status
 ```
 
+## Static code analysis
+
+Run `poetry install` to install the development dependencies, then check lint and formatting from the project root.
+
+```bash
+poetry run ruff check .
+poetry run ruff format --check .
+```
+
+Run `poetry run ruff format .` to apply formatting.
+
 ## Project Structure
 
 ```text

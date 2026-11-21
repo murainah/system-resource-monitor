@@ -1,9 +1,8 @@
+from datetime import datetime
 
 import psutil
-from datetime import datetime
 from rich.console import Console
 from rich.table import Table
-
 
 console = Console()
 
@@ -19,11 +18,11 @@ def get_system_info():
         "timestamp": datetime.now().isoformat(timespec="seconds"),
         "cpu_percent": cpu_usage,
         "memory_percent": memory.percent,
-        "memory_used_gb": round(memory.used / (1024 ** 3), 2),
-        "memory_total_gb": round(memory.total / (1024 ** 3), 2),
+        "memory_used_gb": round(memory.used / (1024**3), 2),
+        "memory_total_gb": round(memory.total / (1024**3), 2),
         "disk_percent": disk.percent,
-        "disk_used_gb": round(disk.used / (1024 ** 3), 2),
-        "disk_total_gb": round(disk.total / (1024 ** 3), 2),
+        "disk_used_gb": round(disk.used / (1024**3), 2),
+        "disk_total_gb": round(disk.total / (1024**3), 2),
     }
 
 
