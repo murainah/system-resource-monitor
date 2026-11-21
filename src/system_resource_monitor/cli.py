@@ -1,4 +1,5 @@
 import argparse
+import logging
 
 from .continuous import continuous_monitoring
 from .logger import save_measurement
@@ -10,6 +11,13 @@ def main():
     """Command-line interface for System Resource Monitor."""
 
     parser = argparse.ArgumentParser(description="Monitor CPU, memory, and disk usage.")
+    parser.add_argument(
+        "--log-level",
+        type=str.upper,
+        choices=("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"),
+        default="WARNING",
+        help="Minimum diagnostic level (default: WARNING)",
+    )
 
     subparsers = parser.add_subparsers(dest="command", required=True)
 
@@ -37,6 +45,9 @@ def main():
     )
 
     args = parser.parse_args()
+    logging.basicConfig(
+        level=args.log_level, format="%(levelname)s %(name)s: %(message)s"
+    )
 
     if args.command == "status":
         display_system_info()

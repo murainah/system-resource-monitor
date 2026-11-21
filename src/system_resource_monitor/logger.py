@@ -1,7 +1,10 @@
 import csv
+import logging
 from pathlib import Path
 
 from .monitor import get_system_info
+
+logger = logging.getLogger(__name__)
 
 
 def save_measurement(filename="system_metrics.csv"):
@@ -10,16 +13,21 @@ def save_measurement(filename="system_metrics.csv"):
     data = get_system_info()
     filepath = Path(filename)
 
-    file_exists = filepath.exists() and filepath.stat().st_size > 0
+    try:
+        file_exists = filepath.exists() and filepath.stat().st_size > 0
 
-    with filepath.open("a", newline="", encoding="utf-8") as file:
-        writer = csv.DictWriter(file, fieldnames=data.keys())
+        with filepath.open("a", newline="", encoding="utf-8") as file:
+            writer = csv.DictWriter(file, fieldnames=data.keys())
 
-        if not file_exists:
-            writer.writeheader()
+            if not file_exists:
+                writer.writeheader()
 
-        writer.writerow(data)
+            writer.writerow(data)
+    except OSError as error:
+        logger.error("Cannot write measurement to %s: %s", filepath, error)
+        raise
 
+    logger.info("Appended measurement to %s", filepath)
     print(f"Measurement saved to {filepath.resolve()}")
 
 

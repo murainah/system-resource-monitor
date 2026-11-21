@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 
 import pandas as pd
@@ -5,6 +6,7 @@ from rich.console import Console
 from rich.table import Table
 
 console = Console()
+logger = logging.getLogger(__name__)
 
 
 def generate_report(filename="system_metrics.csv"):
@@ -13,10 +15,15 @@ def generate_report(filename="system_metrics.csv"):
     filepath = Path(filename)
 
     if not filepath.exists():
+        logger.error("Metrics file not found: %s", filepath)
         console.print("[red]No metrics file found.[/red]")
         return
 
-    data = pd.read_csv(filepath)
+    try:
+        data = pd.read_csv(filepath)
+    except (OSError, ValueError) as error:
+        logger.error("Cannot read metrics CSV %s: %s", filepath, error)
+        raise
 
     if data.empty:
         console.print("[yellow]No measurements available.[/yellow]")
@@ -35,13 +42,17 @@ def generate_report(filename="system_metrics.csv"):
     table.add_column("Minimum (%)", justify="right")
     table.add_column("Maximum (%)", justify="right")
 
-    for name, column in metrics.items():
-        table.add_row(
-            name,
-            f"{data[column].mean():.2f}",
-            f"{data[column].min():.2f}",
-            f"{data[column].max():.2f}",
-        )
+    try:
+        for name, column in metrics.items():
+            table.add_row(
+                name,
+                f"{data[column].mean():.2f}",
+                f"{data[column].min():.2f}",
+                f"{data[column].max():.2f}",
+            )
+    except (KeyError, TypeError, ValueError) as error:
+        logger.error("Cannot summarize metrics CSV %s: %s", filepath, error)
+        raise
 
     console.print(table)
     console.print(f"\nTotal measurements: {len(data)}")

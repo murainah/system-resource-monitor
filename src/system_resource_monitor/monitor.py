@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 
 import psutil
@@ -5,16 +6,22 @@ from rich.console import Console
 from rich.table import Table
 
 console = Console()
+logger = logging.getLogger(__name__)
+HIGH_USAGE_PERCENT = 90
 
 
 def get_system_info():
     """Collect current CPU, memory, and disk usage."""
 
-    cpu_usage = psutil.cpu_percent(interval=1)
-    memory = psutil.virtual_memory()
-    disk = psutil.disk_usage("/")
+    try:
+        cpu_usage = psutil.cpu_percent(interval=1)
+        memory = psutil.virtual_memory()
+        disk = psutil.disk_usage("/")
+    except (OSError, psutil.Error):
+        logger.critical("Cannot collect a system resource measurement", exc_info=True)
+        raise
 
-    return {
+    data = {
         "timestamp": datetime.now().isoformat(timespec="seconds"),
         "cpu_percent": cpu_usage,
         "memory_percent": memory.percent,
@@ -24,6 +31,12 @@ def get_system_info():
         "disk_used_gb": round(disk.used / (1024**3), 2),
         "disk_total_gb": round(disk.total / (1024**3), 2),
     }
+    logger.debug("Collected resource measurement: %s", data)
+    for resource in ("cpu", "memory", "disk"):
+        usage = data[f"{resource}_percent"]
+        if usage >= HIGH_USAGE_PERCENT:
+            logger.warning("%s usage is high: %.1f%%", resource.upper(), usage)
+    return data
 
 
 def display_system_info():

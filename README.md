@@ -90,6 +90,21 @@ poetry run system-monitor watch --interval 5
 
 The interval is the delay after each measurement. Collecting CPU usage itself takes about one second.
 
+## Logging
+
+Diagnostics go to stderr and default to `WARNING`. Set `--log-level` before the command to see more detail or limit output.
+
+```bash
+poetry run system-monitor --log-level DEBUG status
+poetry run system-monitor --log-level INFO record
+```
+
+- `DEBUG` shows the values collected in a resource measurement.
+- `INFO` confirms that a measurement was appended to a CSV.
+- `WARNING` flags each resource whose CPU, memory, or disk usage is at least 90%.
+- `ERROR` reports operational problems such as an unreadable or invalid metrics CSV or a failed write.
+- `CRITICAL` reports a failed sensor query that prevents the monitor from collecting a measurement.
+
 ## Building and Packaging
 
 ```bash
