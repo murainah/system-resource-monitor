@@ -68,12 +68,23 @@ poetry run pre-commit run --all-files
 
 Run `poetry build` to create a wheel (`.whl`) and source distribution (`.tar.gz`) in `dist/`. Run `poetry version` to see the package version.
 
+## Python reference
+
+After `poetry install`, regenerate the API reference from the package docstrings.
+
+```bash
+poetry run pdoc -o docs/reference system_resource_monitor
+```
+
+Open the [reference index](docs/reference/index.html) from your local checkout in a browser.
+
 ## Project structure
 
 | Path | Purpose |
 |---|---|
 | `src/system_resource_monitor/` | CLI, resource collection, CSV recording, continuous sampling, and report generation |
 | `tests/` | pytest suite |
+| `docs/reference/` | Generated Python API reference |
 | `pyproject.toml` and `poetry.lock` | Package metadata, dependency versions, and Ruff configuration |
 | `.pre-commit-config.yaml` | Ruff checks run by the Git hook |
 

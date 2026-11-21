@@ -1,3 +1,5 @@
+"""Parse command-line arguments and dispatch monitoring commands."""
+
 import argparse
 import logging
 
@@ -8,7 +10,12 @@ from .report import generate_report
 
 
 def main():
-    """Command-line interface for System Resource Monitor."""
+    """Run the command selected in the process arguments and return None.
+
+    Configure diagnostic verbosity before dispatching. Argument parsing raises
+    `SystemExit` for help or invalid arguments. Operational exceptions from
+    the selected command propagate to the caller.
+    """
 
     parser = argparse.ArgumentParser(description="Monitor CPU, memory, and disk usage.")
     parser.add_argument(

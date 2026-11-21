@@ -1,3 +1,5 @@
+"""Record resource measurements periodically until interrupted."""
+
 import math
 import time
 
@@ -9,7 +11,16 @@ console = Console()
 
 
 def continuous_monitoring(interval=5):
-    """Record system measurements repeatedly."""
+    """Append samples to `system_metrics.csv` in the current directory.
+
+    `interval` is the delay in seconds after each completed sample. It must
+    be finite and greater than zero.
+
+    Returns `None` after a keyboard interrupt stops monitoring.
+
+    Raises `ValueError` for an invalid interval, `OSError` for an OS error
+    during collection or writing, or `psutil.Error` for a failed sensor query.
+    """
 
     if not math.isfinite(interval) or interval <= 0:
         raise ValueError("Interval must be finite and greater than zero.")

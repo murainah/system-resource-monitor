@@ -1,3 +1,5 @@
+"""Collect CPU, memory, and root filesystem usage and display a live snapshot."""
+
 import logging
 from datetime import datetime
 
@@ -8,10 +10,19 @@ from rich.table import Table
 console = Console()
 logger = logging.getLogger(__name__)
 HIGH_USAGE_PERCENT = 90
+"""Usage percentage at or above which a resource warning is logged."""
 
 
 def get_system_info():
-    """Collect current CPU, memory, and disk usage."""
+    """Collect current resource usage, sampling CPU over one second.
+
+    Returns a dictionary with a local ISO 8601 timestamp, CPU, memory, and
+    disk percentages, and used and total memory and disk sizes in GiB. Size
+    keys ending in `_gb` use 1024³ bytes per unit.
+
+    Raises `OSError` if the operating system cannot supply a measurement
+    or `psutil.Error` if a sensor query fails.
+    """
 
     try:
         cpu_usage = psutil.cpu_percent(interval=1)
@@ -40,7 +51,10 @@ def get_system_info():
 
 
 def display_system_info():
-    """Display system information in a formatted table."""
+    """Print a resource usage table and its timestamp.
+
+    Sensor failures from `get_system_info` propagate to the caller.
+    """
 
     data = get_system_info()
 

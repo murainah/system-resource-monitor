@@ -1,3 +1,5 @@
+"""Print summary statistics from recorded resource measurements."""
+
 import logging
 from pathlib import Path
 
@@ -10,7 +12,18 @@ logger = logging.getLogger(__name__)
 
 
 def generate_report(filename="system_metrics.csv"):
-    """Generate a summary of recorded system measurements."""
+    """Print the mean, minimum, and maximum usage and the sample count.
+
+    `filename` is the input CSV path, relative to the current working
+    directory unless absolute. The CSV must contain `cpu_percent`,
+    `memory_percent`, and `disk_percent` columns.
+
+    Returns `None`. Missing or empty files produce a message instead of a table.
+
+    Raises `OSError` if reading fails, `ValueError` if pandas cannot parse
+    the CSV, `KeyError` if a required column is missing from a nonempty file,
+    or `TypeError` if column values cannot be summarized numerically.
+    """
 
     filepath = Path(filename)
 

@@ -1,3 +1,5 @@
+"""Append resource measurements to CSV."""
+
 import csv
 import logging
 from pathlib import Path
@@ -8,7 +10,16 @@ logger = logging.getLogger(__name__)
 
 
 def save_measurement(filename="system_metrics.csv"):
-    """Collect a system measurement and append it to a CSV file."""
+    """Collect one sample, append it to a CSV, and print a confirmation.
+
+    Write column headers when the file is new or empty.
+
+    `filename` accepts a string or path-like object. Relative paths are
+    resolved from the current working directory.
+
+    Raises `OSError` for an OS error during collection or writing, or
+    `psutil.Error` for a failed sensor query.
+    """
 
     data = get_system_info()
     filepath = Path(filename)
