@@ -157,6 +157,17 @@ poetry run ruff format --check .
 
 Run `poetry run ruff format .` to apply formatting.
 
+## Pre-commit hooks
+
+After `poetry install`, install the Git hook once per clone and run it against all tracked Python files.
+
+```bash
+poetry run pre-commit install
+poetry run pre-commit run --all-files
+```
+
+Git runs Ruff lint and formatting checks on staged Python files before each commit using the project's Poetry environment.
+
 ## Project Structure
 
 ```text
