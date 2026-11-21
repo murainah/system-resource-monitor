@@ -1,223 +1,88 @@
 # System Resource Monitor
 
-A Python command-line application for monitoring CPU, memory, and disk usage. It supports real-time resource inspection, CSV logging, continuous monitoring, and statistical reporting.
+System Resource Monitor is a Python command-line tool for checking CPU, memory, and root filesystem usage. It can display a live snapshot, record samples to CSV, and report the average, minimum, and maximum usage for each resource.
 
-The project uses **Poetry** as its build tool for dependency management, versioning, packaging, and running tasks.
+## Installation
 
-**Repository:** https://github.com/murainah/system-resource-monitor
-
-## Features
-
-- Display current CPU, memory, and disk usage.
-- Save resource measurements to CSV.
-- Continuously collect measurements at configurable intervals.
-- Generate reports showing average, minimum, and maximum resource usage.
-
-## Prerequisites
-
-- Python 3.11 or newer
-- [Poetry](https://python-poetry.org/docs/#installation) 2.2 or newer (needed for the `[dependency-groups]` section of `pyproject.toml`)
-
-Check your versions:
-
-```bash
-python --version
-poetry --version
-```
-
-## Quick Start
+Install Python 3.11 or newer and [Poetry][poetry-install] 2.2 or newer. From a terminal, clone the project and install it with its dependencies.
 
 ```bash
 git clone https://github.com/murainah/system-resource-monitor.git
 cd system-resource-monitor
 poetry install
-poetry run pytest
-poetry build
 ```
-
-These four commands install the dependencies, run the tests, and produce the distributable packages.
-
-## Build Tool Usage
-
-| Task | Command |
-|---|---|
-| Install dependencies and project | `poetry install` |
-| Add a dependency | `poetry add <package>` |
-| Add a development dependency | `poetry add --group dev <package>` |
-| Update the lock file | `poetry lock` |
-| Validate the configuration | `poetry check` |
-| Run the tests | `poetry run pytest` |
-| Show the current version | `poetry version` |
-| Bump the version | `poetry version patch` / `minor` / `major` |
-| Build wheel and source distribution | `poetry build` |
-| Run the application | `poetry run system-monitor status` |
-
-### What Poetry automates
-
-- **Dependency management:** runtime dependencies (`psutil`, `rich`, `pandas`) and development dependencies (`pytest`) are declared in `pyproject.toml`. `poetry.lock` pins exact versions so every install is reproducible.
-- **Compilation / build:** Python has no separate compile step. `poetry build` is the build step: it assembles the source distribution and wheel from `src/`.
-- **Version management:** the version lives in `pyproject.toml` and is changed with `poetry version`.
-- **Packaging:** `poetry build` writes a wheel (`.whl`) and a source archive (`.tar.gz`) to `dist/`.
-- **Entry point:** the `system-monitor` command is generated from `[project.scripts]`.
 
 ## Usage
 
-Display current resource usage:
+Run these commands from the project directory.
+
+| Command | What it does |
+|---|---|
+| `poetry run system-monitor status` | Displays a snapshot of CPU, memory, and disk usage. |
+| `poetry run system-monitor record` | Appends one sample to `system_metrics.csv`. |
+| `poetry run system-monitor watch --interval 5` | Keeps appending samples to `system_metrics.csv` until you press Ctrl+C. |
+| `poetry run system-monitor report` | Reads `system_metrics.csv` and prints the average, minimum, maximum, and sample count. |
+
+CSV paths are relative to the current directory by default. Both `record` and `report` accept `--file` to use a different path.
 
 ```bash
-poetry run system-monitor status
-```
-
-Save a measurement to CSV (default file `system_metrics.csv`):
-
-```bash
-poetry run system-monitor record
 poetry run system-monitor record --file metrics.csv
-```
-
-Generate a summary report from a CSV file:
-
-```bash
-poetry run system-monitor report
 poetry run system-monitor report --file metrics.csv
 ```
 
-Continuously record measurements (press Ctrl+C to stop):
-
-```bash
-poetry run system-monitor watch --interval 5
-```
-
-The interval is the delay after each measurement. Collecting CPU usage itself takes about one second.
+The `watch` interval defaults to five seconds and must be finite and positive. It is the delay after each sample. Collecting CPU usage itself takes about one second. Run `poetry run system-monitor --help` to list the available commands and options.
 
 ## Logging
 
-Diagnostics go to stderr and default to `WARNING`. Set `--log-level` before the command to see more detail or limit output.
+Diagnostics go to stderr and default to `WARNING`. Place `--log-level` before the command to change the minimum level.
 
 ```bash
 poetry run system-monitor --log-level DEBUG status
 poetry run system-monitor --log-level INFO record
 ```
 
-- `DEBUG` shows the values collected in a resource measurement.
-- `INFO` confirms that a measurement was appended to a CSV.
-- `WARNING` flags each resource whose CPU, memory, or disk usage is at least 90%.
-- `ERROR` reports operational problems such as an unreadable or invalid metrics CSV or a failed write.
-- `CRITICAL` reports a failed sensor query that prevents the monitor from collecting a measurement.
+- `DEBUG` shows the collected measurement values.
+- `INFO` confirms that a sample was appended to a CSV.
+- `WARNING` flags each resource whose usage is at least 90%.
+- `ERROR` reports problems such as a missing, unreadable, or invalid CSV or a failed write.
+- `CRITICAL` reports a sensor failure that prevents collecting a sample.
 
-## Building and Packaging
+## Development checks
 
-```bash
-poetry build
-```
-
-The packages are written to `dist/`, for example:
-
-```text
-dist/system_resource_monitor-0.3.0-py3-none-any.whl
-dist/system_resource_monitor-0.3.0.tar.gz
-```
-
-Verify the wheel in a clean virtual environment:
-
-```bash
-python -m venv /tmp/testenv
-/tmp/testenv/bin/pip install dist/system_resource_monitor-0.3.0-py3-none-any.whl
-/tmp/testenv/bin/system-monitor status
-```
-
-## Version Management
-
-Show the current version:
-
-```bash
-poetry version
-```
-
-Release a new version, then commit and tag it:
-
-```bash
-poetry version minor
-git commit -am "Bump version to 0.4.0"
-git tag v0.4.0
-git push origin main --tags
-```
-
-## Testing
-
-The project uses pytest.
+`poetry install` installs pytest, Ruff, and pre-commit in the project environment. The tests cover resource sampling, CSV recording and reports, CLI arguments, logging, and continuous monitoring using mocked sensors and temporary files.
 
 ```bash
 poetry run pytest
-poetry run pytest -v
-```
-
-The tests check the structure of the collected system information, the presence of the required metrics, and that percentage values fall within valid ranges.
-
-You can also check the command-line interface manually:
-
-```bash
-poetry run system-monitor --help
-poetry run system-monitor status
-```
-
-## Static code analysis
-
-Run `poetry install` to install the development dependencies, then check lint and formatting from the project root.
-
-```bash
 poetry run ruff check .
 poetry run ruff format --check .
 ```
 
-Run `poetry run ruff format .` to apply formatting.
-
-## Pre-commit hooks
-
-After `poetry install`, install the Git hook once per clone and run it against all tracked Python files.
+Install the Git hook once per clone. It runs both Ruff checks on staged Python files before each commit. Use `--all-files` to check all tracked Python files immediately.
 
 ```bash
 poetry run pre-commit install
 poetry run pre-commit run --all-files
 ```
 
-Git runs Ruff lint and formatting checks on staged Python files before each commit using the project's Poetry environment.
+## Build the package
 
-## Project Structure
+Run `poetry build` to create a wheel (`.whl`) and source distribution (`.tar.gz`) in `dist/`. Run `poetry version` to see the package version.
 
-```text
-system-resource-monitor/
-├── pyproject.toml
-├── poetry.lock
-├── README.md
-├── src/
-│   └── system_resource_monitor/
-│       ├── __init__.py
-│       ├── monitor.py
-│       ├── logger.py
-│       ├── report.py
-│       ├── continuous.py
-│       └── cli.py
-└── tests/
-    ├── __init__.py
-    └── test_monitor.py
-```
+## Project structure
+
+| Path | Purpose |
+|---|---|
+| `src/system_resource_monitor/` | CLI, resource collection, CSV recording, continuous sampling, and report generation |
+| `tests/` | pytest suite |
+| `pyproject.toml` and `poetry.lock` | Package metadata, dependency versions, and Ruff configuration |
+| `.pre-commit-config.yaml` | Ruff checks run by the Git hook |
 
 ## Troubleshooting
 
-- **`poetry: command not found`:** install Poetry following the [official guide](https://python-poetry.org/docs/#installation).
-- **Error about `dependency-groups`:** your Poetry is older than 2.2. Upgrade it with `poetry self update`.
-- **`poetry.lock` out of sync:** run `poetry lock` and then `poetry install` again.
-- **`report` says no metrics file found:** run `poetry run system-monitor record` first to create `system_metrics.csv`.
-
-## Technologies
-
-- Python
-- Poetry
-- psutil
-- Rich
-- Pandas
-- pytest
+- **Poetry is missing or rejects `dependency-groups`.** Verify the installed version with `poetry --version` and follow the [Poetry installation guide][poetry-install] to install or update it.
+- **The report cannot find the CSV.** Run `record` first, use the same working directory, and pass the same `--file` path to both commands when using a custom filename.
+- **The report says no measurements are available.** Record a sample to populate the CSV. For an invalid CSV, use a file produced by `record` or `watch`.
+- **Recording fails to write a CSV.** Check that the parent directory exists and that you have permission to write there.
 
 ## License
 
@@ -225,4 +90,6 @@ This project is licensed under the [MIT License](LICENSE).
 
 ## Author
 
-Abubakri Murainah — https://github.com/murainah
+[Abubakri Murainah](https://github.com/murainah)
+
+[poetry-install]: https://python-poetry.org/docs/#installation
