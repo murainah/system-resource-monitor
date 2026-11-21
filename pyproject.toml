@@ -1,6 +1,6 @@
 [project]
 name = "system-resource-monitor"
-version = "0.3.0"
+version = "0.4.0"
 description = "A Python command-line tool for monitoring CPU, memory, and disk usage."
 authors = [
     {name = "Abubakri Murainah", email = "ext.a.murainah@etu.emse.fr"}

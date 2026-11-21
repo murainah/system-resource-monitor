@@ -68,6 +68,8 @@ poetry run pre-commit run --all-files
 
 Run `poetry build` to create a wheel (`.whl`) and source distribution (`.tar.gz`) in `dist/`. Run `poetry version` to see the package version.
 
+See the [changelog](CHANGELOG.md) for version history.
+
 ## Python reference
 
 After `poetry install`, regenerate the API reference from the package docstrings.
