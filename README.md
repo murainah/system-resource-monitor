@@ -219,6 +219,10 @@ system-resource-monitor/
 - Pandas
 - pytest
 
+## License
+
+This project is licensed under the [MIT License](LICENSE).
+
 ## Author
 
 Abubakri Murainah — https://github.com/murainah
