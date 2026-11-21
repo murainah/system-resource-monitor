@@ -14,7 +14,7 @@ poetry install
 
 ## Usage
 
-Run these commands from the project directory.
+Run these commands from the project directory. The [usage tutorial](docs/tutorial.md) walks through a complete recording session.
 
 | Command | What it does |
 |---|---|
