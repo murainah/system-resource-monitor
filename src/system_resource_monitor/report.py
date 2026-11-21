@@ -21,11 +21,13 @@ def generate_report(filename="system_metrics.csv"):
 
     try:
         data = pd.read_csv(filepath)
+    except pd.errors.EmptyDataError:
+        data = None
     except (OSError, ValueError) as error:
         logger.error("Cannot read metrics CSV %s: %s", filepath, error)
         raise
 
-    if data.empty:
+    if data is None or data.empty:
         console.print("[yellow]No measurements available.[/yellow]")
         return
 

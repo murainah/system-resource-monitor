@@ -1,3 +1,4 @@
+import math
 import time
 
 from rich.console import Console
@@ -10,8 +11,8 @@ console = Console()
 def continuous_monitoring(interval=5):
     """Record system measurements repeatedly."""
 
-    if interval <= 0:
-        raise ValueError("Interval must be greater than zero.")
+    if not math.isfinite(interval) or interval <= 0:
+        raise ValueError("Interval must be finite and greater than zero.")
 
     console.print(f"[green]Monitoring started. Interval: {interval} seconds.[/green]")
     console.print("Press Ctrl+C to stop.\n")
